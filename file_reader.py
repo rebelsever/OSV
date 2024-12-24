@@ -19,7 +19,6 @@ def read_excel_files(files, target_columns):
                     if df is not None:
                         data_frames.append(df)
                         sheet_processed = True
-                        break
                 if not sheet_processed:
                     raise ValueError(f"Файл {os.path.basename(file_path)} не содержит ожидаемых данных.")
             else:
