@@ -1,10 +1,8 @@
 import pandas as pd
-from openpyxl import Workbook 
-from openpyxl.styles import Font, Alignment, Border, Side 
-from datetime import datetime
-import os
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, Border, Side
 
-def create_report(discrepancies, merged_df, save_path=None):
+def create_report(discrepancies, merged_df):
     wb = Workbook()
     ws = wb.active
     ws.title = "Отчет"
@@ -149,18 +147,8 @@ def create_report(discrepancies, merged_df, save_path=None):
     ws.merge_cells('A2:A4')
     ws['A2'].value = 'Счет'
     ws['A2'].font = header_font
-    ws['A2'].alignment = header_alignment
+    ws['A2'].alignment = header_alignment  
 
-     # Заполняем данными из DataFrame
-    fill_report_data(ws, merged_df, wb)
-    now = datetime.now()
-    formatted_time = now.strftime("Отчет_%d_%m_%Y_%H-%M.xlsx")
-    if save_path: full_path = os.path.join(save_path, formatted_time)
-    else:
-         full_path = formatted_time
-         wb.save(full_path)
-
-def fill_report_data(ws, merged_df, wb,save_path=None):
     row_num = 5
     for index, row in merged_df.iterrows():
         ws.cell(row=row_num, column=1).value = row['№ Счета']
@@ -205,22 +193,15 @@ def fill_report_data(ws, merged_df, wb,save_path=None):
 
     # Добавление границ для всех ячеек с данными
     thin_border = Border(left=Side(style='thin'), 
-                     right=Side(style='thin'), 
-                     top=Side(style='thin'), 
-                     bottom=Side(style='thin'))
+                         right=Side(style='thin'), 
+                         top=Side(style='thin'), 
+                         bottom=Side(style='thin'))
     for row in ws.iter_rows(min_row=2, max_row=row_num, min_col=1, max_col=19):
         for cell in row:
             cell.border = thin_border
 
-    # Сохранение файла
-    now = datetime.now()
-    formatted_time = now.strftime("Отчет_%d_%m_%Y_%H-%M.xlsx")
-    if save_path:
-        full_path = os.path.join(save_path, formatted_time) 
-    else: 
-        full_path = formatted_time 
-    wb.save(full_path)
-    
-    print(merged_df.head())  # Вывод первых нескольких строк DataFrame для проверки
+    return wb
 
-    
+def save_report(wb, save_path):
+    # Сохранение файла
+    wb.save(save_path)

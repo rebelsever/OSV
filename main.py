@@ -1,30 +1,22 @@
 import os
 import pandas as pd
-from create_report import create_report
+from create_report import create_report, save_report
 from file_reader import read_excel_files
 from data_comparer import compare_data, calculate_differences, process_balance_columns
 
-# Определение путей к файлам и целевых столбцов
-ekp_files = [r"C:\Users\Компьютер\Desktop\ReconcilinationOfMigrationResults\input_ekp\Тестовый от ЕКП.xlsx",
-             r"C:\Users\Компьютер\Desktop\ReconcilinationOfMigrationResults\input_ekp\корпорат.xlsx"]
-gbk_files = [r"C:\Users\Компьютер\Desktop\ReconcilinationOfMigrationResults\input_gbk\Тестовый от гбк.xlsx"]
+def main(ekp_files, gbk_files, save_path):
+    ekp_columns = [
+        'Балансовый счет', '№ Счета', 'Валюта', 'Входящий остаток', 'Входящий остаток, в н\\в', 
+        'Дебетовый оборот', 'Дебетовый оборот н\\в', 'Кредитовый оборот', 'Кредитовый оборот н\\в', 
+        'Исходящий остаток', 'Исходящий остаток, в нац. валюте'
+    ]
 
-ekp_columns = [
-    'Балансовый счет', '№ Счета', 'Валюта', 'Входящий остаток', 'Входящий остаток, в н\\в', 
-    'Дебетовый оборот', 'Дебетовый оборот н\\в', 'Кредитовый оборот', 'Кредитовый оборот н\\в', 
-    'Исходящий остаток', 'Исходящий остаток, в нац. валюте'
-]
-
-gbk_columns = [
-    'Номер счета', 'Наименование счета', 'Код валюты', 'в валюте счета', 'в функциональной валюте', 
-    'в валюте счета', 'в функциональной валюте', 'в валюте счета', 'в функциональной валюте', 
-    'в валюте счета', 'в функциональной валюте', 'в валюте счета', 'в функциональной валюте', 
-    'в валюте счета', 'в функциональной валюте'
-]
-
-def main():
-    # Определение пути для сохранения отчета на рабочем столе
-    save_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    gbk_columns = [
+        'Номер счета', 'Наименование счета', 'Код валюты', 'в валюте счета', 'в функциональной валюте', 
+        'в валюте счета', 'в функциональной валюте', 'в валюте счета', 'в функциональной валюте', 
+        'в валюте счета', 'в функциональной валюте', 'в валюте счета', 'в функциональной валюте', 
+        'в валюте счета', 'в функциональной валюте'
+    ]
 
     # Чтение файлов EKP
     print("Чтение данных EKP...")
@@ -47,9 +39,12 @@ def main():
     
     # Создание отчета
     print("Создание отчета...")
-    create_report(discrepancies, merged_df, save_path)
+    wb = create_report(discrepancies, merged_df)
+
+    # Сохранение отчета 
+    save_report(wb, save_path)
     
-    print("Отчет успешно создан.")
+    print(f"Отчет успешно создан: {save_path}")
 
 if __name__ == "__main__":
-    main()
+    main([], [], "")
